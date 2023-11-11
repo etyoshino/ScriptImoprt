@@ -19,7 +19,12 @@ namespace Excel
         private const int StartRowIndex = 3;
         
         private static readonly StringBuilder _stringBuilder = new StringBuilder(500);
-    
+
+        static ExcelImporter()
+        {
+            
+        }
+        
         public override void OnImportAsset(AssetImportContext ctx)
         {
             if (Path.GetFileName(ctx.assetPath).StartsWith("~$"))
