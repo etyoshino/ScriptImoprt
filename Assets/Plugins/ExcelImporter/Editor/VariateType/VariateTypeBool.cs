@@ -1,6 +1,6 @@
 ﻿namespace Excel
 {
-    public class VariateManager
+    public class VariateTypeBool
     {
         
     }
