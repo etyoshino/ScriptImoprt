@@ -49,6 +49,7 @@ namespace Excel
             const string tempDataPath = "Temp/TempConfigData";
             try
             {
+                // 备份excel 删除无用字符
                 File.Copy(path, tempDataPath, true);
                 stream = File.Open(tempDataPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
@@ -60,7 +61,7 @@ namespace Excel
             using (var excelDataReader = ExcelReaderFactory.CreateOpenXmlReader(stream))
             {
                 var dataSet = excelDataReader.AsDataSet();
-
+                
                 DataTable dataTable = dataSet.Tables[0];
                 int rowCount = dataTable.Rows.Count;
                 int columnCount = dataTable.Columns.Count;
@@ -69,7 +70,7 @@ namespace Excel
                 bool isSuccess = ConfigCheck(rowCount, columnCount, dataRowCollection);
                 if (isSuccess)
                 {
-                    isSuccess = GenerateConfigCS(path,columnCount,dataRowCollection);
+                    isSuccess = GenerateConfigCS(path, columnCount, dataRowCollection);
                 }
 
                 return isSuccess;

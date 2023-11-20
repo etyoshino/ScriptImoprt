@@ -1,25 +1,18 @@
-﻿namespace Excel
+namespace Excel
 {
-    public class VariateTypeBool : VariateTypeBase
+    public class VariateTypeString : VariateTypeBase
     {
-        public override string TypeName => "bool";
-     
+        public override string TypeName => "string";
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
-            if (!VariateHelp.TryGetValue(valueString, out bool result))
-            {
-                logError += PraseLogError(rowIdx);
-                return false;
-            }
-
             return true;
         }
     }
 
-    public class VariateTypeBoolArray : VariateTypeBool
+    public class VariateTypeStringArray : VariateTypeString, IVariateArray
     {
-        public override string TypeName => "bool[]";
-        
+        public override string TypeName => "string[]";
+
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
             return TryPraseArrayElement(valueString, rowIdx, ref logError);

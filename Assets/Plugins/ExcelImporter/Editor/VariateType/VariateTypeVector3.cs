@@ -1,12 +1,15 @@
-﻿namespace Excel
+using UnityEngine;
+
+namespace Excel
 {
-    public class VariateTypeBool : VariateTypeBase
+    public class VariateTypeVector3 : VariateTypeBase
     {
-        public override string TypeName => "bool";
-     
+        public override string TypeName => "vector3";
+        public override string FullTypeName => "v3";
+
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
-            if (!VariateHelp.TryGetValue(valueString, out bool result))
+            if (!VariateHelp.TryGetValue(valueString, out Vector3 result))
             {
                 logError += PraseLogError(rowIdx);
                 return false;
@@ -16,10 +19,11 @@
         }
     }
 
-    public class VariateTypeBoolArray : VariateTypeBool
+    public class VariateTypeVector3Array : VariateTypeVector3, IVariateArray
     {
-        public override string TypeName => "bool[]";
-        
+        public override string TypeName => "vector3[]";
+        public override string FullTypeName => "v3[]";
+
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
             return TryPraseArrayElement(valueString, rowIdx, ref logError);

@@ -1,12 +1,11 @@
-﻿namespace Excel
+namespace Excel
 {
-    public class VariateTypeBool : VariateTypeBase
+    public class VariateTypeFloat : VariateTypeBase
     {
-        public override string TypeName => "bool";
-     
+        public override string TypeName => "float";
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
-            if (!VariateHelp.TryGetValue(valueString, out bool result))
+            if (!VariateHelp.TryGetValue(valueString, out float result))
             {
                 logError += PraseLogError(rowIdx);
                 return false;
@@ -15,11 +14,10 @@
             return true;
         }
     }
-
-    public class VariateTypeBoolArray : VariateTypeBool
+    
+    public class VariateTypeFloatArray : VariateTypeFloat , IVariateArray
     {
-        public override string TypeName => "bool[]";
-        
+        public override string TypeName => "float[]";
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
             return TryPraseArrayElement(valueString, rowIdx, ref logError);
