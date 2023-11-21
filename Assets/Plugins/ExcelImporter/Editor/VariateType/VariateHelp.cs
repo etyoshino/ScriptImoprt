@@ -102,7 +102,7 @@ namespace Excel
         #region Vector
 
         // Vector2 parse
-        public static bool TryGetValue(string valueString, out Vector2 result,char splitChar = '.')
+        public static bool TryGetValue(string valueString, out Vector2 result,char splitChar = '_')
         {
             result = Vector2.zero;
             if (string.IsNullOrEmpty(valueString))
@@ -130,7 +130,7 @@ namespace Excel
         }
         
         // Vector2Int parse
-        public static bool TryGetValue(string valueString, out Vector2Int result,char splitChar = '.')
+        public static bool TryGetValue(string valueString, out Vector2Int result,char splitChar = '_')
         {
             result = Vector2Int.zero;
             if (string.IsNullOrEmpty(valueString))
@@ -158,7 +158,7 @@ namespace Excel
         }
         
         // Vector3 parse
-        public static bool TryGetValue(string valueString, out Vector3 result,char splitChar = '.')
+        public static bool TryGetValue(string valueString, out Vector3 result,char splitChar = '_')
         {
             result = Vector3.zero;
             if (string.IsNullOrEmpty(valueString))
@@ -191,7 +191,7 @@ namespace Excel
         }
         
         // Vector3Int parse
-        public static bool TryGetValue(string valueString, out Vector3Int result,char splitChar = '.')
+        public static bool TryGetValue(string valueString, out Vector3Int result,char splitChar = '_')
         {
             result = Vector3Int.zero;
             if (string.IsNullOrEmpty(valueString))

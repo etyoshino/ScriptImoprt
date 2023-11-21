@@ -12,16 +12,20 @@ namespace Excel
     {
         public abstract string TypeName { get; }
         public virtual string FullTypeName => TypeName;
+
+        public string VariateDesc = "";
         
         public string Name;
         
         public int ColumnIndex;
         
-        protected const char SplitChar = '.';
+        protected const char SplitChar = ',';
         
         protected const char ArrarySplitChar = '|';
         
-        public static T CreateInstance<T>(string name, int columnIndex)
+        public abstract VariateTypeBase CreateInstance(string name, int columnIndex);
+        
+        public static T _CreateInstance<T>(string name, int columnIndex)
             where T : VariateTypeBase, new()
         {
             T result = new T();
@@ -69,15 +73,15 @@ namespace Excel
         
         protected string PraseLogError(int rowIndex)
         {
-            return PraseLogError(rowIndex, ColumnIndex, Name, TypeName, 2);
+            return PraseLogError(rowIndex, ColumnIndex, Name, TypeName);
         }
-        internal static string PraseLogError(int rowIndex, int columnIndex, string name, string typeName, int skipFrames)
+        internal static string PraseLogError(int rowIndex, int columnIndex, string name, string typeName)
         {
             StackTrace st = new StackTrace(new StackFrame(true));
             string callerName = st.GetFrame(0).GetMethod().Name;
             string callerLineNumber = st.GetFrame(0).GetFileLineNumber().ToString();
             string callerFilePath = st.GetFrame(0).GetFileName();
-            string addLog = $"\n{Path.GetFileName(callerFilePath)} Function:{callerName} Line:{callerLineNumber}";
+            string addLog = $"{Path.GetFileName(callerFilePath)} Function:{callerName} Line:{callerLineNumber}";
 
             return $"Excel Config Error: TryPrase Error\nRow: {rowIndex + 1}, Column: {columnIndex + 1}, Name: {name}, Type: {typeName}\n{addLog}\n";
         }

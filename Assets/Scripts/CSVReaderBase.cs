@@ -1,6 +1,6 @@
 namespace DefaultNamespace
 {
-    public sealed class CSVReaderBase
+    public abstract class CSVReaderBase
     {
         
     }

@@ -4,8 +4,13 @@ namespace Excel
 {
     public class VariateTypeVector3 : VariateTypeBase
     {
-        public override string TypeName => "vector3";
-        public override string FullTypeName => "v3";
+        public override string FullTypeName => "Vector3";
+        public override string TypeName => "V3";
+        
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeVector3>(name, columnIndex);
+        }
 
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
@@ -21,8 +26,13 @@ namespace Excel
 
     public class VariateTypeVector3Array : VariateTypeVector3, IVariateArray
     {
-        public override string TypeName => "vector3[]";
-        public override string FullTypeName => "v3[]";
+        public override string FullTypeName => "Vector3[]";
+        public override string TypeName => "V3[]";
+        
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeVector3Array>(name, columnIndex);
+        }
 
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {

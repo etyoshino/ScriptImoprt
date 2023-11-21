@@ -4,9 +4,14 @@ namespace Excel
 {
     public class VariateTypeVector3Int : VariateTypeBase
     {
-        public override string TypeName => "vector3";
-        public override string FullTypeName => "v3Int";
+        public override string FullTypeName => "Vector3Int";
+        public override string TypeName => "V3Int";
      
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeVector3Int>(name, columnIndex);
+        }
+        
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
             if (!VariateHelp.TryGetValue(valueString, out Vector2Int result))
@@ -21,8 +26,13 @@ namespace Excel
 
     public class VariateTypeVector3IntArray : VariateTypeVector3Int , IVariateArray
     {
-        public override string TypeName => "vector3[]";
-        public override string FullTypeName => "v3Int[]";
+        public override string FullTypeName => "Vector3Int[]";
+        public override string TypeName => "V3Int[]";
+        
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeVector3IntArray>(name, columnIndex);
+        }
         
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
