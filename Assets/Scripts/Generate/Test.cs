@@ -8,9 +8,13 @@ namespace CSVConfig
 #if UNITY_EDITOR
     [Serializable]
 #endif
-    public partial class Asd
+    public partial class Test
     // : 
     {   
+        /// <summary>
+        /// 音效ID  [音乐100001~199999；音效200001~299999；语音300001~399999]
+        /// </summary>
+        public uint Id;
         
         /// <summary>
         /// 资源名

@@ -5,7 +5,7 @@ using UnityEditor;
 namespace Excel
 {
     
-    public class ExcelDeleteHanlder : UnityEditor.AssetModificationProcessor
+    public class ExcelDeleteHanlder : AssetModificationProcessor
     {
         private const string excelExtension = ".xlsx";
         private static AssetDeleteResult OnWillDeleteAsset(string assetPath, RemoveAssetOptions options)

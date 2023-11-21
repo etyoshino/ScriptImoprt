@@ -111,7 +111,7 @@ namespace Excel
             ImportExcel(ctx.assetPath);
             ctx.LogImportError(LogImportexcel.ToString());
         }
-
+        
         bool ImportExcel(string path)
         {
             LogImportexcel.Clear();
@@ -130,26 +130,36 @@ namespace Excel
             try
             {
                 var excelDataReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
-                
                 var dataSet = excelDataReader.AsDataSet();
 
-                
-                DataTable dataTable = dataSet.Tables[0];
-                int rowCount = dataTable.Rows.Count;
-                int columnCount = dataTable.Columns.Count;
-                DataRowCollection dataRowCollection = dataTable.Rows;
-
-                bool isSuccess = ConfigCheck(path, rowCount, columnCount, dataRowCollection);
-                if (isSuccess)
+                int sheetCount = dataSet.Tables.Count;
+                // string excelName = Path.GetFileNameWithoutExtension(path);
+                string configName;
+                // for (int i = 0; i < sheetCount; i++)
                 {
-                    isSuccess = GenerateConfigCS(path, rowCount, columnCount, dataRowCollection);
-                }
+                    DataTable dataTable = dataSet.Tables[0];
+                    // configName = sheetCount > 1 ? excelName + dataTable.TableName : excelName;
+                    configName = Path.GetFileNameWithoutExtension(path);
+                    int rowCount = dataTable.Rows.Count;
+                    int columnCount = dataTable.Columns.Count;
+                    DataRowCollection dataRowCollection = dataTable.Rows;
 
-                GenerateCSV(path, rowCount, columnCount, dataRowCollection);
+                    bool isSuccess = ConfigCheck(rowCount, columnCount, dataRowCollection);
+                    if (isSuccess)
+                    {
+                        isSuccess = GenerateConfigCS(configName, rowCount, columnCount, dataRowCollection);
+                    }
+
+                    if (isSuccess)
+                    {
+                        GenerateCSV(configName, rowCount, columnCount, dataRowCollection);
+                    }
+                    
+                    stream.Close();
+                    File.Delete(tempDataPath);
+                }
                 
-                stream.Close();
-                File.Delete(tempDataPath);
-                return isSuccess;
+                return true;
             }
             catch (Exception e)
             {
@@ -161,9 +171,8 @@ namespace Excel
             
         }
         
-        private bool GenerateConfigCS(string path, int rowCount, int columnCount, DataRowCollection dataRowCollection)
+        private bool GenerateConfigCS(string configName, int rowCount, int columnCount, DataRowCollection dataRowCollection)
         {
-            string configName = Path.GetFileNameWithoutExtension(path);
             HashVariateNameCheck.Clear();
 
             List<VariateTypeBase> variateTypeList = new();
@@ -174,13 +183,13 @@ namespace Excel
                 string configVariateName = dataRowCollection[VariateNameRow][columnIdx].ToString().Trim();
                 if (string.IsNullOrEmpty(configVariateName))
                 {
-                    LogImportexcel.Append($"{ConfigLogWarring} Column:{columnIdx} Variate Empty\n");
+                    LogImportexcel.Append($"{ConfigLogWarring}Config:{configName} Column:{columnIdx} Variate Empty\n");
                     break;
                 }
 
                 if (HashVariateNameCheck.Contains(configVariateName))
                 {
-                    LogImportexcel.Append($"{ConfigLogError} Column:{columnIdx} Repeat VariateName\n");
+                    LogImportexcel.Append($"{ConfigLogError}Config:{configName} Column:{columnIdx} Repeat VariateName\n");
                     break;
                 }
 
@@ -213,7 +222,7 @@ namespace Excel
                 }
                 else
                 {
-                    LogImportexcel.Append($"{ConfigLogError}Column:{columnIdx} Error VariateType:{configVariateType}\n");
+                    LogImportexcel.Append($"{ConfigLogError}Config:{configName} Column:{columnIdx} Error VariateType:{configVariateType}\n");
                 }
             }
 
@@ -245,7 +254,7 @@ namespace Excel
                 Directory.CreateDirectory(strDirectoryPath);
         }
         
-        private bool ConfigCheck(string path, int rowCount, int columnCount, DataRowCollection dataRowCollection)
+        private bool ConfigCheck(int rowCount, int columnCount, DataRowCollection dataRowCollection)
         {
             if (columnCount < 2 || rowCount <= StartRowIndex)
             {
@@ -260,10 +269,10 @@ namespace Excel
             return true;
         }
         
-        private void GenerateCSV(string path, int rowCount, int columnCount, DataRowCollection dataRowCollection)
+        private void GenerateCSV(string conifgName, int rowCount, int columnCount, DataRowCollection dataRowCollection)
         {
             TryCreateDirectory(ConfigCSVRootPath);
-            string csvPath = $"{ConfigCSVRootPath}{Path.GetFileNameWithoutExtension(path)}.csv";
+            string csvPath = $"{ConfigCSVRootPath}{conifgName}.csv";
 
             stringBuilder.Clear();
             for (int i = 0; i < rowCount; i++)
@@ -283,7 +292,22 @@ namespace Excel
                 }
                 stringBuilder.Append('\n');
             }
-            File.WriteAllText(csvPath, stringBuilder.ToString(), Encoding.UTF8);
+            
+            if (File.Exists(csvPath))
+            {
+                File.SetAttributes(csvPath, FileAttributes.Normal);
+            }
+
+            try
+            {
+                File.WriteAllText(csvPath, stringBuilder.ToString(), Encoding.UTF8);
+                File.SetAttributes(csvPath,FileAttributes.ReadOnly);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"{ConfigLogError} generate CSV:{csvPath} Failed/{e}");
+                throw;
+            }
         }
 
         private static string GetFilePath([CallerFilePath] string path = "")

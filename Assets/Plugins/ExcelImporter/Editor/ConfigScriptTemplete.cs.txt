@@ -10,9 +10,9 @@ namespace {{ cs_namespace }}
 #endif
     public partial class {{ config_name }}
     // : {{ baseclass_name }}
-    {   {{ for field in fields }}{{ if !(field.index == 0) }}
+    {   {{ for field in fields }}
         {{ field.desc }}
-        public {{ field.variate_type }} {{ field.variate_name }};{{ end }}
+        public {{ field.variate_type }} {{ field.variate_name }};
         {{ end }}
         
 #if UNITY_EDITOR
