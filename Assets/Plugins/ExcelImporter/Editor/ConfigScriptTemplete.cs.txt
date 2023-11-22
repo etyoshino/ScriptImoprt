@@ -5,9 +5,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Core.Engine;
-using Core.Tools.CSVData;
-using Core.Tools.Extensions;
 
 namespace {{ cs_namespace }}
 {
@@ -16,16 +13,32 @@ namespace {{ cs_namespace }}
 #endif
     public partial class {{ config_name }}
     // : {{ baseclass_name }}
-    {   {{ for field in fields }}
+    {   {{ for field in fields }}{{ if !field.ignore }}
         {{ field.desc }}
         public {{ field.variate_type }} {{ field.variate_name }};
-        {{ end }}
-        
+        {{end}}{{ end }}{{ for field in fields }}{{ if field.ignore }}
 #if UNITY_EDITOR
         
-#endif
-        //todo
+        {{ field.desc }}
+        public {{ field.variate_type }} {{ field.variate_name }};
         
+#endif{{end}}{{ end }}
+        public static List<{{config_name}}> Load(TextReader reader)
+        {
+            var result = new List<{{config_name}}>();
+            //todo CSVParse 
+            return result;
+        }
         
+    }
+    
+    public sealed partial class {{ config_manager }}
+    //: CSVManagerBase
+    {
+        private readonly List<{{ config_name }}> _dataList;
+        public {{ config_manager }}(TextReader reader)
+        {
+            _dataList = {{ config_name }}.Load(reader);
+        }
     }
 }

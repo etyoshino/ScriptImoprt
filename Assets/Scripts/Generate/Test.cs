@@ -2,6 +2,9 @@
 
 using System;
 using UnityEngine;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace CSVConfig
 {
@@ -15,11 +18,6 @@ namespace CSVConfig
         /// 音效ID  [音乐100001~199999；音效200001~299999；语音300001~399999]
         /// </summary>
         public uint Id;
-        
-        /// <summary>
-        /// 资源名
-        /// </summary>
-        public string Name;
         
         /// <summary>
         /// 是否为3D音效
@@ -41,12 +39,30 @@ namespace CSVConfig
         /// </summary>
         public Vector2 Pos;
         
-        
 #if UNITY_EDITOR
         
+        /// <summary>
+        /// 资源名
+        /// </summary>
+        public string Name;
+        
 #endif
-        //todo
+        public static List<Test> Load(TextReader reader)
+        {
+            var result = new List<Test>();
+            //todo CSVParse 
+            return result;
+        }
         
-        
+    }
+    
+    public sealed partial class TestManager
+    //: CSVManagerBase
+    {
+        private readonly List<Test> _dataList;
+        public TestManager(TextReader reader)
+        {
+            _dataList = Test.Load(reader);
+        }
     }
 }

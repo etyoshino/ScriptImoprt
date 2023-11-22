@@ -11,7 +11,7 @@
         
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
-            if (!VariateHelp.TryGetValue(valueString, out short result))
+            if (!TryGetValue(valueString, out short result))
             {
                 logError += PraseLogError(rowIdx);
                 return false;
@@ -52,7 +52,7 @@
         
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
-            if (!VariateHelp.TryGetValue(valueString, out short result))
+            if (!TryGetValue(valueString, out short result))
             {
                 logError += PraseLogError(rowIdx);
                 return false;

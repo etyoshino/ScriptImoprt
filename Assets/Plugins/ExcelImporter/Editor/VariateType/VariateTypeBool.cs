@@ -11,7 +11,7 @@
 
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
-            if (!VariateHelp.TryGetValue(valueString, out bool result))
+            if (!TryGetValue(valueString, out bool result))
             {
                 logError += PraseLogError(rowIdx);
                 return false;

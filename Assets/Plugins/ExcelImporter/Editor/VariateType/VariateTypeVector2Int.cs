@@ -14,7 +14,7 @@ namespace Excel
         
         public override bool TryPrase(string valueString, int rowIdx, ref string logError)
         {
-            if (!VariateHelp.TryGetValue(valueString, out Vector2Int result))
+            if (!TryGetValue(valueString, out Vector2Int result))
             {
                 logError += PraseLogError(rowIdx);
                 return false;

@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Scriban;
+using Unity.VisualScripting;
 using UnityEditor.AssetImporters;
 
 namespace Excel
@@ -194,12 +195,10 @@ namespace Excel
                     LogImportexcel.Append($"{ConfigLogError}Config:{configName} Column:{columnIdx} Repeat VariateName\n");
                     break;
                 }
-
                 HashVariateNameCheck.Add(configVariateName);
-
-
+                
                 var variateTypes = dataRowCollection[VariateTypeRow][columnIdx].ToString().Split(VariateTypeSplitChar);
-                string configVariateType = variateTypes[0];
+                string configVariateType = variateTypes[0].ToUpper();
                 if (VariateDic.TryGetValue(configVariateType, out tmpConfigVariate))
                 {
                     configVariateDesc = dataRowCollection[VariateDescRow][columnIdx].ToString().Trim();
@@ -240,11 +239,16 @@ namespace Excel
             {
                 cs_namespace = CSNamespace,
                 config_name = configName,
+                start_row = StartRowIndex,
+                config_manager = $"{configName}Manager",
                 
                 fields = variateTypeList.ToObjectArray(variateType => new
                 {
                     index = variateType.ColumnIndex,
                     desc = variateType.VariateDesc,
+                    key = variateType.VariateAttribute.HasFlag(EVariateAttribute.Key),
+                    union = variateType.VariateAttribute.HasFlag(EVariateAttribute.Union),
+                    ignore = variateType.VariateAttribute.HasFlag(EVariateAttribute.Ignore),
                     variate_type = variateType.FullTypeName,
                     variate_name = variateType.Name,
                 }),
