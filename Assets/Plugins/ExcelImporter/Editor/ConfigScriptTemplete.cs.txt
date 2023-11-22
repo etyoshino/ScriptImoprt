@@ -2,6 +2,12 @@
 
 using System;
 using UnityEngine;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Core.Engine;
+using Core.Tools.CSVData;
+using Core.Tools.Extensions;
 
 namespace {{ cs_namespace }}
 {

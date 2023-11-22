@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Excel
@@ -6,6 +7,16 @@ namespace Excel
     public interface IVariateArray
     {
         bool TryPraseArrayElement(string valueString, int rowIdx, ref string logError);
+    }
+
+    [Flags]
+    public enum VariateAttribute : uint
+    {
+        None = 0,               // 不做处理
+        Key = 1 << 1,           // 索引
+        Union = 1 << 2,          // 分组
+        Replace = 1 << 4,    // 参数替换ParamData 替换表
+        Ignore = 1 << 8,     // 忽视
     }
     
     public abstract class VariateTypeBase
@@ -18,6 +29,8 @@ namespace Excel
         public string Name;
         
         public int ColumnIndex;
+
+        public VariateAttribute VariateAttribute;
         
         protected const char SplitChar = ',';
         
@@ -37,6 +50,7 @@ namespace Excel
         {
             Name = name;
             ColumnIndex = columnIndex;
+            VariateAttribute = VariateAttribute.None;
         }
 
         public abstract bool TryPrase(string valueString, int rowIdx, ref string logError);
@@ -77,13 +91,25 @@ namespace Excel
         }
         internal static string PraseLogError(int rowIndex, int columnIndex, string name, string typeName)
         {
-            StackTrace st = new StackTrace(new StackFrame(true));
-            string callerName = st.GetFrame(0).GetMethod().Name;
-            string callerLineNumber = st.GetFrame(0).GetFileLineNumber().ToString();
-            string callerFilePath = st.GetFrame(0).GetFileName();
+            StackFrame stackFrame = new StackFrame(true);
+            string callerName = stackFrame.GetMethod().Name;
+            string callerLineNumber = stackFrame.GetFileLineNumber().ToString();
+            string callerFilePath = stackFrame.GetFileName();
             string addLog = $"{Path.GetFileName(callerFilePath)} Function:{callerName} Line:{callerLineNumber}";
 
             return $"Excel Config Error: TryPrase Error\nRow: {rowIndex + 1}, Column: {columnIndex + 1}, Name: {name}, Type: {typeName}\n{addLog}\n";
+        }
+
+        public void UpdateVariateAttribute(string attribute)
+        {
+            VariateAttribute &= attribute switch
+            {
+                "KEY" => VariateAttribute.Key,
+                "UNION" => VariateAttribute.Union,
+                "IGNORE" => VariateAttribute.Ignore,
+                "REPLACE" => VariateAttribute.Replace,
+                _ => VariateAttribute.None,
+            };
         }
     }
 }

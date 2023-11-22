@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -5,7 +7,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Scriban;
-using UnityEditor;
 using UnityEditor.AssetImporters;
 
 namespace Excel
@@ -27,6 +28,7 @@ namespace Excel
         private const int VariateTypeRow = 1;
         private const int VariateDescRow = 2; //配置描述
         private const int StartRowIndex = 3;
+        private const char VariateTypeSplitChar = ';';
 
         private static readonly Dictionary<string, VariateTypeBase> VariateDic;
         
@@ -195,12 +197,19 @@ namespace Excel
 
                 HashVariateNameCheck.Add(configVariateName);
 
-                string configVariateType = dataRowCollection[VariateTypeRow][columnIdx].ToString().ToUpper();
+
+                var variateTypes = dataRowCollection[VariateTypeRow][columnIdx].ToString().Split(VariateTypeSplitChar);
+                string configVariateType = variateTypes[0];
                 if (VariateDic.TryGetValue(configVariateType, out tmpConfigVariate))
                 {
                     configVariateDesc = dataRowCollection[VariateDescRow][columnIdx].ToString().Trim();
 
                     tmpConfigVariate = tmpConfigVariate.CreateInstance(configVariateName, columnIdx);
+                    for (int i = 1; i < variateTypes.Length; i++)
+                    {
+                        tmpConfigVariate.UpdateVariateAttribute(variateTypes[i]);
+                    }
+                    
                     dataRowCollection[VariateTypeRow][columnIdx] = tmpConfigVariate.FullTypeName;
                     variateTypeList.Add(tmpConfigVariate);
                     tmpConfigVariate.VariateDesc = string.IsNullOrEmpty(configVariateDesc)
@@ -321,3 +330,4 @@ namespace Excel
         }
     }
 }
+#endif
