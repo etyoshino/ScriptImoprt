@@ -1,0 +1,17 @@
+{
+    "name": "ExcelImporter",
+    "rootNamespace": "",
+    "references": [
+        "GUID:989567e94931ca94fb6177b16c6c92ed",
+        "GUID:21b0c8d1703a94250bfac916590cea4f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

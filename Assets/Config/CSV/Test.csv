@@ -1,10 +1,6 @@
-﻿Id,Name,Is3D,IsLoop,Description,Pos,
-uint,string,bool,bool,string,Vector2,
-音效ID  [音乐100001~199999；音效200001~299999；语音300001~399999],资源名,是否为3D音效,是否循环,备注,位置,
-100001,battle_1,True,True,,2_2,
-100002,doudizhu,True,True,,,
-200001,heavyhit,True,False,,,
-200002,metal_hit,True,False,,,
-200003,wood_hit,True,False,,,
-300001,{#hero1011_skill_param01},True,False,,,
-300002,{#hero1011_skill_param02},True,False,,,
+﻿Id,Desc,Behavior,Type
+UInt32;key,String;Ignore,CustomEnum<ETestBehavior>,Enum<EType>
+key ID,资源名,行为,状态
+1,desc,0,TypeB
+2,desc,Move,TypeA
+3,desc,Dead,TypeA
