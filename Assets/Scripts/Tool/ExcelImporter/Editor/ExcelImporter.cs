@@ -293,9 +293,19 @@ namespace Engine.Excel
             stringBuilder.Clear();
             for (int i = 0; i < rowCount; i++)
             {
+                // 过滤掉空行和不需要的行数据
+                if (i > ExcelCommonField.StartRowIndex && ExcelHelp.ConfigRowEmpty(dataRowCollection[i], columnCount))
+                {
+                    continue;
+                }
+                
                 for (int j = 0; j < columnCount; j++)
                 {
-                    string content = dataRowCollection[i][j].ToString();
+                    // 把文本中的换行符替换为换行
+                    string content = dataRowCollection[i][j]
+                        .ToString()
+                        .Replace("\n", "\\n");
+                    
                     if (content.Contains('\"'))
                     {
                         content = content.Replace("\"","\"\"");
@@ -319,7 +329,6 @@ namespace Engine.Excel
                 stringBuilder.Append('\n');
             }
             
-            var assetPath = (csvDirectory + configName).Remove(0, 7);
             if (File.Exists(csvPath))
             {
                 File.WriteAllText(csvPath, stringBuilder.ToString(), Encoding.UTF8);

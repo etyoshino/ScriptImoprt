@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
+using System.Reflection;
+using UnityEditor;
 
 namespace Engine.Excel
 {
@@ -26,32 +29,27 @@ namespace Engine.Excel
             if (!Directory.Exists(strDirectoryPath))
                 Directory.CreateDirectory(strDirectoryPath);
         }
-
-        public static void DeleteExcel(string assetPath)
+        
+        public static bool ConfigRowEmpty(DataRow row, int columnCount)
         {
-            var fileName = Path.GetFileNameWithoutExtension(assetPath);
-           
-            
-            // foreach (var configPair in configMgr.config.configs)
-            // {
-            //     if (configPair.configName == fileName)
-            //     {
-            //         string csfilePath = $"{ExcelCommonField.ConfigScriptsRootPath}CSV{fileName}Reader.cs";
-            //         if (File.Exists(csfilePath))
-            //         {
-            //             File.Delete(csfilePath);
-            //         }
-            //
-            //         var scvPath = configPair.excelPath.Replace("Excel", "CSV");
-            //         scvPath = scvPath.Replace(ExcelCommonField.ExcelExtension, ".csv");
-            //         if (File.Exists(scvPath))
-            //         {
-            //             File.Delete(scvPath);
-            //         }
-            //         break;
-            //     }
-            // }
-            // configMgr.OnDeleteConfig(fileName);
+            for (int i = 0; i < columnCount; i++)
+            {
+                var str = row[i].ToString();
+                if (!string.IsNullOrEmpty(str))
+                    return false;
+            }
+
+            return true;
+        }
+        
+        public static void MoveExcel(string fileName, string newPath)
+        {
+            // TODO
+        }
+
+        public static void DeleteExcel(string assetPath, bool isReName = false)
+        {
+            // TODO
         }
     }
 }
