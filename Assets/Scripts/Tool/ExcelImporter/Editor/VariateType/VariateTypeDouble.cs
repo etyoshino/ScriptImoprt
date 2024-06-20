@@ -46,4 +46,20 @@ namespace Engine.Excel
             return base.TryParse(valueString, rowIdx, ref logError);
         }
     }
+    
+    class VariateTypeDoubleArrayArray : VariateTypeDoubleArray , IVariateArrayArray
+    {
+        public override string TypeName => "double[][]";
+        public override string CSTypeName => "DoubleAryAry";
+        public override string BaseTypeName => base.TypeName;
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeDoubleArrayArray>(name, columnIndex,';');
+        }
+        
+        public override bool TryParse(string valueString, int rowIdx, ref StringBuilder result)
+        {
+            return TryParseArrayArray(this, valueString, rowIdx, ref result);
+        }
+    }
 }

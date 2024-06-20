@@ -120,7 +120,7 @@ namespace Engine.Excel
             Dictionary<string, HashSet<string>> variateEnumList = new();
             VariateTypeBase tmpConfigVariate;
             string configVariateDesc;
-            // Check Config Data Valid
+            // 检查配置表数据格式是否正确
             for (int columnIdx = 0; columnIdx < columnCount; columnIdx++)
             {
                 string configVariateName = dataRowCollection[ExcelCommonField.VariateNameRow][columnIdx].ToString().Trim();
@@ -143,14 +143,21 @@ namespace Engine.Excel
                 var enumCheck = VariateEnumBase.EnumCheck(configVariateType, configVariateName, columnIdx,
                     out tmpConfigVariate);
                 configVariateType = configVariateType.ToUpper();
-                if (enumCheck || ExcelCommonField.VariateDic.TryGetValue(configVariateType, out tmpConfigVariate))
+
+                do
                 {
-                    configVariateDesc = dataRowCollection[ExcelCommonField.VariateDescRow][columnIdx].ToString().Trim();
-                    if(!enumCheck)
+                    if (enumCheck){}
+                    else if (ExcelCommonField.VariateDic.TryGetValue(configVariateType, out tmpConfigVariate))
                     {
                         tmpConfigVariate = tmpConfigVariate.CreateInstance(configVariateName, columnIdx);
                     }
-
+                    else
+                    {
+                        LogImportexcel.Append($"{ConfigLogError}Config:<{configName}> Column:<{columnIdx + 1}> Error VariateType:{configVariateType}\n");
+                        break;
+                    }
+                    
+                    configVariateDesc = dataRowCollection[ExcelCommonField.VariateDescRow][columnIdx].ToString().Trim();
                     SetConfigVariateAttribute(variateTypes, tmpConfigVariate);
 
                     tmpConfigVariate.SourceTypeName = originTypeName;
@@ -159,6 +166,7 @@ namespace Engine.Excel
 
                     if (!TryParseVariateData(tmpConfigVariate, columnIdx, rowCount, dataRowCollection))
                         return false;
+                    
                     if (enumCheck)
                     {
                         var enumVariate = tmpConfigVariate as VariateEnumBase;
@@ -171,13 +179,10 @@ namespace Engine.Excel
                             variateEnumList[enumVariate.EnumName].AddRange(enumVariate.EnumKeys);
                         }
                     }
-                }
-                else
-                {
-                    LogImportexcel.Append($"{ConfigLogError}Config:<{configName}> Column:<{columnIdx + 1}> Error VariateType:{configVariateType}\n");
-                }
+                }while(false);
+                
             }
-
+            
             // Build CS Render
             Template csTemplate = Template.Parse(File.ReadAllText(ExcelCommonField.ConfigSCTemplatePath));
             string csText = csTemplate.Render(new
@@ -213,12 +218,8 @@ namespace Engine.Excel
                     values = variateType.Value.ToArray(),
                 }).ToArray()
             });
-
-            if (variateEnumList.Count() > 0)
-            {
-                ExcelCommonField.UpdateEnumConfigDic();
-            }
-            // Create CS File
+            
+            // 创建脚本文件
             ExcelHelp.TryCreateDirectory(ExcelCommonField.ConfigScriptsRootPath);
             string csFilePath = $"{ExcelCommonField.ConfigScriptsRootPath}{string.Format(ScriptFileNameFormat, configName)}.cs";
             if (File.Exists(csFilePath))
@@ -228,6 +229,12 @@ namespace Engine.Excel
             else
             {
                 File.WriteAllText(csFilePath, csText);
+            }
+            
+            // 更新枚举库
+            if (variateEnumList.Count() > 0)
+            {
+                ExcelCommonField.UpdateEnumConfigDic();
             }
             return true;
         }

@@ -50,6 +50,24 @@ namespace Engine.Excel
         }
     }
     
+    class VariateTypeInt64ArrayArray : VariateTypeInt64Array , IVariateArrayArray
+    {
+        public override string TypeName => "Int64[][]";
+        public override string FullTypeName => "long[][]";
+        public override string CSTypeName => "LongAryAry";
+        public override string BaseTypeName => base.TypeName;
+        
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeInt64ArrayArray>(name, columnIndex,';');
+        }
+        
+        public override bool TryParse(string valueString, int rowIdx, ref StringBuilder result)
+        {
+            return TryParseArrayArray(this, valueString, rowIdx, ref result);
+        }
+    }
+    
     class VariateTypeUInt64 : VariateTypeBase
     {
         public override string TypeName => "UInt64";
@@ -95,6 +113,24 @@ namespace Engine.Excel
         public bool TryParseArrayElement(string valueString, int rowIdx, ref StringBuilder logError)
         {
             return base.TryParse(valueString, rowIdx, ref logError);
+        }
+    }
+    
+    class VariateTypeUInt64ArrayArray : VariateTypeUInt64Array , IVariateArrayArray
+    {
+        public override string TypeName => "UInt64[][]";
+        public override string FullTypeName => "ulong[][]";
+        public override string CSTypeName => "ULongAryAry";
+        public override string BaseTypeName => base.TypeName;
+        
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeUInt64ArrayArray>(name, columnIndex,';');
+        }
+        
+        public override bool TryParse(string valueString, int rowIdx, ref StringBuilder result)
+        {
+            return TryParseArrayArray(this, valueString, rowIdx, ref result);
         }
     }
 }

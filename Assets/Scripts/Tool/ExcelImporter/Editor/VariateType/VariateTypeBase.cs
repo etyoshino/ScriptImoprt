@@ -6,6 +6,13 @@ using UnityEngine;
 
 namespace Engine.Excel
 {
+    internal enum EVariateType
+    {
+        Single,
+        Array,
+        ArrayArray,
+    }
+    
     public interface IVariateArray
     {
         bool TryParseArrayElement(string valueString, int rowIdx, ref StringBuilder logError);
@@ -97,22 +104,24 @@ namespace Engine.Excel
             return true;
         }
         
-        protected bool TryPaeseArrayArray(IVariateArrayArray arrayConfig,  string valueString, int rowIndex, ref StringBuilder result)
+        protected bool TryParseArrayArray(IVariateArrayArray arrayConfig, string valueString, int rowIndex,
+            ref StringBuilder result)
         {
-            string[] values = valueString.Split('|');
+            string[] values = valueString.Split(arrayConfig.AryArySplitChar);
 
             if (values.Length == 1 && string.IsNullOrEmpty(values[0]))
             {
                 return true;
             }
-            
+
             for (int i = 0, iLength = values.Length; i < iLength; i++)
             {
-                if (!TryParseArray(arrayConfig,  values[i], rowIndex, ref result))
+                if (!TryParseArray(arrayConfig, values[i], rowIndex, ref result))
                 {
                     return false;
                 }
             }
+
             return true;
         }
         

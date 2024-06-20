@@ -32,37 +32,65 @@ namespace Engine.Excel
                 var match = _regex.Match(name);
                 if (match.Success)
                 {
-                    var value= match.Value[1..^1];
-                    var isAry = VariateAryCheck(name);
-                    var tmpVariateEnum = isAry
-                        ? _CreateInstance<VariateCustEnumArray>(typename, columnIndex, ';')
-                        : _CreateInstance<VariateCustEnum>(typename, columnIndex);
+                    var value = match.Value[1..^1];
+                    var type = GetVariateType(name);
+                    var tmpVariateEnum = type switch
+                    {
+                        EVariateType.Single => _CreateInstance<VariateCustEnum>(typename, columnIndex),
+                        EVariateType.Array => _CreateInstance<VariateCustEnumArray>(typename, columnIndex, ';'),
+                    };
                     tmpVariateEnum.InitEnumType(value);
                     variateEnum = tmpVariateEnum;
                     return true;
                 }
             }
-            if (name.Contains("Enum", StringComparison.OrdinalIgnoreCase))
+            else if (name.Contains("Enum", StringComparison.OrdinalIgnoreCase))
             {
                 var match = _regex.Match(name);
                 if (match.Success)
                 {
-                    var value= match.Value[1..^1];
-                    var isAry = VariateAryCheck(name);
-                    var tmpVariateEnum = isAry
-                        ? _CreateInstance<VariateEnumArray>(typename, columnIndex, ';')
-                        : _CreateInstance<VariateEnum>(typename, columnIndex);
+                    var value = match.Value[1..^1];
+                    var type = GetVariateType(name);
+                    var tmpVariateEnum = type switch
+                    {
+                        EVariateType.Single => _CreateInstance<VariateEnum>(typename, columnIndex),
+                        EVariateType.Array => _CreateInstance<VariateEnumArray>(typename, columnIndex, ';'),
+                    };
                     tmpVariateEnum.InitEnumType(value);
                     variateEnum = tmpVariateEnum;
                     return true;
                 }
             }
+            
             return false;
         }
 
-        private static bool VariateAryCheck(string variateName)
+        private static EVariateType GetVariateType(string variateName)
         {
-            return variateName.Contains("[]") || variateName.Contains("Ary", StringComparison.OrdinalIgnoreCase);
+            var count = 0;
+            var idx = variateName.IndexOf("[]");
+            while (idx != -1)
+            {
+                count++;
+                idx = variateName.IndexOf("[]", idx + 1);
+            }
+
+            if (count == 0)
+            {
+                idx = variateName.IndexOf("Ary");
+                while (idx != -1)
+                {
+                    count++;
+                    idx = variateName.IndexOf("Ary", idx + 1);
+                }
+            }
+
+            return count switch
+            {
+                1 => EVariateType.Array,
+                2 => EVariateType.ArrayArray,
+                _ => EVariateType.Single,
+            };
         }
     }
     
@@ -167,7 +195,7 @@ namespace Engine.Excel
                 return false;
             }
             
-            EnumKeys.Add(valueString);
+            if(!string.IsNullOrEmpty(valueString)) EnumKeys.Add(valueString);
             result.Append(valueString);
             return true;
         }

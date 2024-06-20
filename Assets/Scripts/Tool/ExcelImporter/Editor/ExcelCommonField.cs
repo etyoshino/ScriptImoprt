@@ -15,7 +15,7 @@ namespace Engine.Excel
         public const string ExcelExtension = ".xlsx";
         public const string ConfigNameSpace = "Game.Config";
         
-        public static readonly string ConfigSCTemplatePath = $"{GetDirectionPath()}/ConfigScriptTemplete.cs.txt";
+        public static readonly string ConfigSCTemplatePath = $"{GetDirectionPath()}/ConfigScriptTemplete.cs.txt"; // 生成脚本文件模板
         public static readonly Regex replaceReg = new (@"{#\w+#*}");
         
         public const char VariateTypeSplitChar = ';';
@@ -27,11 +27,12 @@ namespace Engine.Excel
         
         public static Dictionary<string, VariateTypeBase> VariateDic;
         public static Dictionary<string, Type> EnumDic;
-
+        
         static ExcelCommonField()
         {
             VariateDic = new();
             EnumDic = new();
+            
             #region int
 
             RegisterVariateType(new VariateTypeInt8());
@@ -70,15 +71,15 @@ namespace Engine.Excel
 
             #region vector
 
-            // RegisterVariateType(new VariateTypeVector2());
-            // RegisterVariateType(new VariateTypeVector2Int());
-            // RegisterVariateType(new VariateTypeVector2Array());
-            // RegisterVariateType(new VariateTypeVector2IntArray());
+            RegisterVariateType(new VariateTypeVector2());
+            RegisterVariateType(new VariateTypeVector2Int());
+            RegisterVariateType(new VariateTypeVector2Array());
+            RegisterVariateType(new VariateTypeVector2IntArray());
             
-            // RegisterVariateType(new VariateTypeVector3());
-            // RegisterVariateType(new VariateTypeVector3Int());
-            // RegisterVariateType(new VariateTypeVector3Array());
-            // RegisterVariateType(new VariateTypeVector3IntArray());
+            RegisterVariateType(new VariateTypeVector3());
+            RegisterVariateType(new VariateTypeVector3Int());
+            RegisterVariateType(new VariateTypeVector3Array());
+            RegisterVariateType(new VariateTypeVector3IntArray());
 
             #endregion
 
@@ -87,6 +88,15 @@ namespace Engine.Excel
             UpdateEnumConfigDic();
 
             #endregion
+        }
+        
+        private static void RegisterVariateType(VariateTypeBase variateType)
+        {
+            if (variateType is null)
+                return;
+
+            VariateDic.Add(variateType.TypeName.ToUpper(), variateType);
+            VariateDic.TryAdd(variateType.FullTypeName.ToUpper(), variateType);
         }
         
         /// <summary>
@@ -101,15 +111,6 @@ namespace Engine.Excel
             {
                 EnumDic.Add(types[i].Name, types[i]);
             }
-        }
-
-        private static void RegisterVariateType(VariateTypeBase variateType)
-        {
-            if (variateType is null)
-                return;
-
-            VariateDic.Add(variateType.TypeName.ToUpper(), variateType);
-            VariateDic.TryAdd(variateType.FullTypeName.ToUpper(), variateType);
         }
         
         private static string GetFilePath([CallerFilePath] string path = "")

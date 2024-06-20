@@ -39,4 +39,21 @@ namespace Engine.Excel
             return base.TryParse(valueString, rowIdx, ref logError);
         }
     }
+    
+    class VariateTypeStringArrayArray : VariateTypeStringArray , IVariateArrayArray
+    {
+        public override string TypeName => "string[][]";
+        public override string CSTypeName => "StringAryAry";
+        public override string BaseTypeName => base.TypeName;
+        
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeStringArrayArray>(name, columnIndex,';');
+        }
+        
+        public override bool TryParse(string valueString, int rowIdx, ref StringBuilder result)
+        {
+            return TryParseArrayArray(this, valueString, rowIdx, ref result);
+        }
+    }
 }

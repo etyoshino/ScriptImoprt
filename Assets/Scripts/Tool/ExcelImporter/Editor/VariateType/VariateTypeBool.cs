@@ -47,4 +47,20 @@ namespace Engine.Excel
             return base.TryParse(valueString, rowIdx, ref logError);
         }
     }
+    
+    class VariateTypeBoolArrayArray : VariateTypeBoolArray , IVariateArrayArray
+    {
+        public override string TypeName => "bool[][]";
+        public override string CSTypeName => "BoolAryAry";
+        public override string BaseTypeName => base.TypeName;
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeBoolArrayArray>(name, columnIndex,';');
+        }
+        
+        public override bool TryParse(string valueString, int rowIdx, ref StringBuilder result)
+        {
+            return TryParseArrayArray(this, valueString, rowIdx, ref result);
+        }
+    }
 }

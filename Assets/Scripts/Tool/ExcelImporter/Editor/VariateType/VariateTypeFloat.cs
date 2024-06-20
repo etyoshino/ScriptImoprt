@@ -47,4 +47,21 @@ namespace Engine.Excel
             return base.TryParse(valueString, rowIdx, ref logError);
         }
     }
+    
+    class VariateTypeFloatArrayArray : VariateTypeFloatArray , IVariateArrayArray
+    {
+        public override string TypeName => "float[][]";
+        public override string CSTypeName => "FloatAryAry";
+        public override string BaseTypeName => base.TypeName;
+        
+        public override VariateTypeBase CreateInstance(string name, int columnIndex)
+        {
+            return _CreateInstance<VariateTypeFloatArrayArray>(name, columnIndex,';');
+        }
+        
+        public override bool TryParse(string valueString, int rowIdx, ref StringBuilder result)
+        {
+            return TryParseArrayArray(this, valueString, rowIdx, ref result);
+        }
+    }
 }
